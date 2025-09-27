@@ -199,8 +199,6 @@ ENTRYPOINT ["java", "-jar", "/app.jar"]
 4. Add tests for new functionality
 5. Submit a pull request
 
-## 📄 License
-
 
 ## 🆘 Troubleshooting
 
