@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="styles.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topbar">
+    <div class="container">
+        <h1 class="brand">Task Manager</h1>
+        <div class="actions">
+            <span class="header-subtitle">Organize your tasks efficiently</span>
+        </div>
+    </div>
+</header>
+
+<main class="container page">
+    <div class="main-layout">
+        <!-- Task Form Section -->
+        <section class="form-section">
+            <h2 class="form-title">📝 Task Form</h2>
+            <form id="createForm" class="task-form">
+                <div class="form-group">
+                    <label class="lbl">Title<span class="req">*</span></label>
+                    <input id="title" class="input" maxlength="200" required placeholder="e.g., Write design doc"/>
+                </div>
+                
+                <div class="form-group">
+                    <label class="lbl">Assignee</label>
+                    <input id="assignee" class="input" placeholder="e.g., John Doe"/>
+                </div>
+                
+                <div class="form-group">
+                    <label class="lbl">Description</label>
+                    <textarea id="description" class="input textarea" rows="4" placeholder="Optional details"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="lbl">Category</label>
+                        <select id="category" class="input">
+                            <option value="">Select Category</option>
+                            <option>UI</option>
+                            <option>Backend</option>
+                            <option>QA</option>
+                            <option>DevOps</option>
+                            <option>Documentation</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="lbl">Priority</label>
+                        <select id="priority" class="input">
+                            <option value="LOW">Low</option>
+                            <option value="MEDIUM" selected>Medium</option>
+                            <option value="HIGH">High</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="lbl">Due Date</label>
+                    <input id="dueDate" type="datetime-local" class="input"/>
+                </div>
+                
+                <button type="button" id="submitCreate" class="btn primary submit-btn">✨ Create Task</button>
+            </form>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section class="dashboard-section">
+            <h2 class="dashboard-title">📊 Dashboard</h2>
+            
+            <!-- Search and Filter -->
+            <div class="search-filter-bar">
+                <div class="search-box">
+                    <input id="fText" class="input search-input" placeholder="Search tasks..."/>
+                    <button type="button" id="searchBtn" class="btn search-btn">🔍</button>
+                </div>
+                <button type="button" id="filterBtn" class="btn filter-btn">Filter</button>
+            </div>
+
+            <!-- Sort Controls -->
+            <div class="sort-controls">
+                <label for="sortSelect" class="sort-label">Sort by:</label>
+                <select id="sortSelect" class="input sort-select">
+                    <option value="createdAt">Created Date (Newest)</option>
+                    <option value="-createdAt">Created Date (Oldest)</option>
+                    <option value="dueDate">Due Date (Earliest)</option>
+                    <option value="-dueDate">Due Date (Latest)</option>
+                    <option value="priority">Priority (Low to High)</option>
+                    <option value="-priority">Priority (High to Low)</option>
+                    <option value="assignee">Assignee (A-Z)</option>
+                    <option value="-assignee">Assignee (Z-A)</option>
+                    <option value="category">Category (A-Z)</option>
+                    <option value="-category">Category (Z-A)</option>
+                    <option value="status">Status</option>
+                    <option value="-status">Status (Reverse)</option>
+                </select>
+            </div>
+
+            <!-- Task Table -->
+            <div class="table-container">
+                <div class="list-header">
+                    <div class="left">
+                        <span id="countBadge" class="badge">0 tasks</span>
+                    </div>
+                    <div class="right">
+                        <label class="switch">
+                            <input type="checkbox" id="denseToggle">
+                            <span>📋 Compact</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="tableWrap" class="table-wrap">
+                    <table class="table" aria-describedby="countBadge">
+                        <thead>
+                        <tr>
+                            <th>Assignee</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Due Date</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="rows"></tbody>
+                    </table>
+                    <div id="empty" class="empty hidden">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-title">No tasks found</div>
+                        <div class="empty-sub">Create your first task using the form on the left.</div>
+                    </div>
+                </div>
+
+                <div class="pager">
+                    <button id="prev" class="btn" disabled>←</button>
+                    <span id="pageInfo" class="muted">Page 1 / 1</span>
+                    <button id="next" class="btn" disabled>→</button>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<!-- Hidden Filter Modal -->
+<div id="filterModal" class="filter-modal hidden">
+    <div class="filter-content">
+        <h3>Advanced Filters</h3>
+        <form id="filtersForm" class="filters-grid">
+            <input id="fAssignee" class="input" placeholder="Assignee"/>
+            <input id="fCategory" class="input" placeholder="Category"/>
+            <select id="fStatus" class="input">
+                <option value="">Status (any)</option>
+                <option>OPEN</option><option>IN_PROGRESS</option><option>DONE</option>
+            </select>
+            <input id="fDueAfter"  type="date" class="input" />
+            <input id="fDueBefore" type="date" class="input" />
+            <select id="fSort" class="input">
+                <option value="createdAt" selected>Sort: Created Date (Newest)</option>
+                <option value="-createdAt">Sort: Created Date (Oldest)</option>
+                <option value="dueDate">Sort: Due Date (Earliest)</option>
+                <option value="-dueDate">Sort: Due Date (Latest)</option>
+                <option value="priority">Sort: Priority (Low to High)</option>
+                <option value="-priority">Sort: Priority (High to Low)</option>
+                <option value="assignee">Sort: Assignee (A-Z)</option>
+                <option value="-assignee">Sort: Assignee (Z-A)</option>
+                <option value="category">Sort: Category (A-Z)</option>
+                <option value="-category">Sort: Category (Z-A)</option>
+                <option value="status">Sort: Status</option>
+                <option value="-status">Sort: Status (Reverse)</option>
+            </select>
+            <div class="filters-actions">
+                <button type="submit" class="btn">🔍 Apply</button>
+                <button type="button" id="clearFilters" class="btn ghost">🗑️ Clear</button>
+                <button type="button" id="closeFilter" class="btn ghost">✖️ Close</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+<div id="spinner" class="spinner hidden" aria-hidden="true"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
